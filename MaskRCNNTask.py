@@ -35,7 +35,7 @@ def Train_DataSet(TaskID, datasetBase, datasetConfig, modelConfig, train_data, v
     train_data.prepare()
     valid_data.prepare()
     
-    model = modellib.MaskRCNN(mode="training", config=modelConfig, model_dir=LOG_DIR)
+    model = modellib.MaskRCNN(mode="training", config=modelConfig, log_dir = LOG_DIR_FOLDER, model_dir=LOG_DIR)
     if modelConfig.LEARNIING_MODE == "transfer":
         model.load_weights(modelConfig.PretainedModelPath, by_name=True)
         

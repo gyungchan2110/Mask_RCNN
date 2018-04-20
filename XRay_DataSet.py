@@ -52,6 +52,25 @@ class Xray_CardioMegalyDataSetConfig():
         self.CLASSES = Classes
         self.NUM_CLASS = len(self.CLASSES)
         self.DATASET = Dataset
+    def SaveConfig(self, LogPath):
+    
+        if(not os.path.isdir(LogPath)): 
+            os.mkdir(LogPath)
+
+        if(not os.path.isdir(LogPath)): 
+            print("Error : Log Path is Empty!")
+            return 
+        
+        fileName = self.NAME + "_" +  self.ConfigType + ".txt"    
+        filePath = LogPath + "/" + fileName
+    
+        f = open(filePath, 'a', encoding='utf-8')
+        
+        
+        for a in dir(self):
+            if not a.startswith("__") and not callable(getattr(self, a)):
+                f.writelines("{:30} {}\n".format(a, getattr(self, a)))
+        f.close()
 
 class Xray_CardioMegalyModelConfig(Config):
     NAME = "Cardiomegaly"  # Override in sub-classes
