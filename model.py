@@ -1750,7 +1750,7 @@ class MaskRCNN():
     The actual Keras model is in the keras_model property.
     """
 
-    def __init__(self, mode, config, model_dir):
+    def __init__(self, mode, config, log_dir, model_dir):
         """
         mode: Either "training" or "inference"
         config: A Sub-class of the Config class
@@ -2130,7 +2130,7 @@ class MaskRCNN():
                 log("{}{:20}   ({})".format(" " * indent, layer.name,
                                             layer.__class__.__name__))
 
-    def set_log_dir(self, model_path=None):
+    def set_log_dir(self, log_path = None, model_path=None):
         """Sets the model log directory and epoch counter.
 
         model_path: If None, or a format different from what this code uses
@@ -2155,7 +2155,10 @@ class MaskRCNN():
                 self.epoch = int(m.group(6)) + 1
 
         # Directory for training logs
-        self.log_dir = os.path.join(self.model_dir, "{}{:%Y%m%dT%H%M}".format(
+        if(log_path):
+            self.log_dir = log_path
+        else : 
+            self.log_dir = os.path.join(self.model_dir, "{}{:%Y%m%dT%H%M}".format(
             self.config.NAME.lower(), now))
 
         # Path to save after each epoch. Include placeholders that get filled by Keras.
@@ -2204,6 +2207,7 @@ class MaskRCNN():
                                        batch_size=self.config.BATCH_SIZE,
                                        augment=False)
         history = keras.callbacks.History() 
+
         # Callbacks
         callbacks = [
             keras.callbacks.TensorBoard(log_dir=self.log_dir,
