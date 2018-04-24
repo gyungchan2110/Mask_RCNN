@@ -103,7 +103,7 @@ def Test_Dataset(TaskID, datasetBase, datasetConfig, modelConfig, ModelFileName,
 
     model = modellib.MaskRCNN(mode="inference", model_dir=MODEL_DIR + "/" + ModelFileName, config=modelConfig, log_dir = LOG_DIR)
     model.load_weights(MODEL_DIR + "/" + ModelFileName, by_name=True)
-
+    print("load weight done")
 
     Classes = datasetConfig.CLASSES    
     ##############################################################

@@ -312,5 +312,5 @@ class Xray_CardioMegalyDataset(DataSets.Dataset):
 
         Images = np.stack(Images, 0)
         Masks = np.stack(Masks, 0)
-
+        print("Get Data Done")
         return Images, Filenames, Masks

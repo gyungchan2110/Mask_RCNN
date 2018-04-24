@@ -2403,24 +2403,30 @@ class MaskRCNN():
         #     images) == self.config.BATCH_SIZE, "len(images) must be equal to BATCH_SIZE"
 
         if verbose:
+            #pass
             log("Processing {} images".format(len(images)))
-            for image in images:
-                log("image", image)
+            #for image in images:
+            #    log("image", image)
         # Mold inputs to format expected by the neural network
-        molded_images, image_metas, windows = self.mold_inputs(images)
-        # if verbose:
+ 
         #     log("molded_images", molded_images)
         #     log("image_metas", image_metas)
         # Run object detection
-        detections, mrcnn_class, mrcnn_bbox, mrcnn_mask, \
-            rois, rpn_class, rpn_bbox =\
-            self.keras_model.predict([molded_images, image_metas], batch_size = self.config.BATCH_SIZE, verbose=0)
+        
+ 
         # Process detections
         results = []
         for i, image in enumerate(images):
+            image = np.expand_dims(image, 0)
+            molded_images, image_metas, windows = self.mold_inputs(image)
+            
+            detections, mrcnn_class, mrcnn_bbox, mrcnn_mask, \
+            rois, rpn_class, rpn_bbox =\
+            self.keras_model.predict([molded_images, image_metas], batch_size = self.config.BATCH_SIZE, verbose=0)
+            
             final_rois, final_class_ids, final_scores, final_masks =\
-                self.unmold_detections(detections[i], mrcnn_mask[i],
-                                       image.shape, windows[i])
+                self.unmold_detections(detections[0], mrcnn_mask[0],
+                                       image.shape, windows[0])
             results.append({
                 "rois": final_rois,
                 "class_ids": final_class_ids,
