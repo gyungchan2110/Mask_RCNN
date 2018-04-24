@@ -251,8 +251,9 @@ class Xray_CardioMegalyDataset(DataSets.Dataset):
         if(len(image.shape) < 3):
             image = np.expand_dims(image, -1)
 
+        filename = fileaPath.split("/")[-1]
 
-        return image
+        return image, filename
 
     def image_reference(self, image_id):
         """Return the shapes data of the image."""
@@ -269,11 +270,14 @@ class Xray_CardioMegalyDataset(DataSets.Dataset):
         filePaths = info['maskPaths']
         
         masks = []
-        classids = [1]
+        classids = [0]
         
+        #print(filePaths)
         N = len(filePaths)
-        for filePath in filePaths:           
+        for i, filePath in enumerate(filePaths):           
             #print(filePath)
+            if i == 0:
+                continue
             mask = cv2.imread(filePath)
             mask = np.asarray(mask, dtype = "int16")
             if(len(mask.shape)==3):
@@ -290,3 +294,23 @@ class Xray_CardioMegalyDataset(DataSets.Dataset):
     def showImginfo(self):
         print(len(self.image_info))
         print(self.image_info)
+
+    def getDataSet(self):
+        ids = self.image_ids
+
+        Images = []
+        Masks = []
+        Filenames = []
+
+        for pid in ids : 
+
+            image, filename = self.load_image(pid)
+            masks,ids = self.load_mask(pid) 
+            Images.append(image)
+            Masks.append(masks)
+            Filenames.append(filename)
+
+        Images = np.stack(Images, 0)
+        Masks = np.stack(Masks, 0)
+
+        return Images, Filenames, Masks

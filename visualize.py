@@ -18,6 +18,9 @@ import matplotlib.lines as lines
 from matplotlib.patches import Polygon
 import IPython.display
 
+from skimage.morphology import skeletonize
+import cv2
+
 import utils
 
 
@@ -75,7 +78,7 @@ def apply_mask(image, mask, color, alpha=0.5):
 
 def display_instances(image, result, class_names, filename,
                       scores=None, title="",
-                      figsize=(16, 16), ax=None,
+                      figsize=(16, 16), auto_show=None,
                       show_mask=True, show_bbox=True,
                       colors=None, captions=None, truemask = None, logDir = None):
     """
@@ -90,33 +93,43 @@ def display_instances(image, result, class_names, filename,
     colors: (optional) An array or colors to use with each object
     captions: (optional) A list of strings to use as captions for each object
     """
-    boxes = result['rois'], 
+    boxes = result['rois'][0], 
     masks = result['masks'], 
     class_ids = result['class_ids']
+    boxes = np.asarray(boxes)
+    masks = np.asarray(masks)
+    #masks = np.asarray(masks)
 
     # Number of instances
     N = boxes.shape[0]
     if not N:
         print("\n*** No instances to display *** \n")
     else:
-        print(boxes.shape[0], masks.shape[-1], class_ids.shape[0])
+        #print(boxes.shape[0], masks.shape[-1], class_ids.shape[0])
         assert boxes.shape[0] == masks.shape[-1] == class_ids.shape[0]
 
     # If no axis is passed, create one and automatically call show()
-    auto_show = False
-    if not ax:
-        _, ax = plt.subplots(1, figsize=figsize)
-        auto_show = True
+    # auto_show = True
+    # if not ax:
+    #     _, ax = plt.subplots(1, figsize=figsize)
+    #     auto_show = True
 
     # Generate random colors
     colors = colors or random_colors(N + 1)
 
+    fig = plt.figure()
+    #fig.set_size_inches(256/256, 1, forward=False)
+    ax = plt.Axes(fig, [0., 0., 1., 1.])
+    ax.set_axis_off()
+    
+
     # Show area outside image boundaries.
     height, width = image.shape[:2]
-    ax.set_ylim(height + 10, -10)
-    ax.set_xlim(-10, width + 10)
-    ax.axis('off')
+    ax.set_ylim(height + 0, -0)
+    ax.set_xlim(-0, width + 0)
     ax.set_title(title)
+
+    fig.add_axes(ax)
 
     masked_image = image.astype(np.uint32).copy()
     # if(len(masked_image) == 2):
@@ -148,9 +161,14 @@ def display_instances(image, result, class_names, filename,
                 color='w', size=11, backgroundcolor="none")
 
         # Mask
-        mask = masks[:, :, i]
+        mask = masks[0, :, :, i]
         if show_mask:
             masked_image = apply_mask(masked_image, mask, color)
+            mask_skl = np.copy(mask)
+            #mask_skl = mask_skl // 255
+            mask_skl = skeletonize(mask_skl)
+            #mask_skl = mask_skl * 255
+            masked_image = apply_mask(masked_image, mask_skl, (255,255,255))
 
         # Mask Polygon
         # Pad to ensure proper polygons for masks that touch image edges.
@@ -178,10 +196,22 @@ def display_instances(image, result, class_names, filename,
             p = Polygon(verts, linewidth = 2, facecolor="none", edgecolor=color)
             ax.add_patch(p)
 
+        mask_skl = np.copy(truemask[:,:,0])
+        mask_skl = mask_skl // 255
+        mask_skl = skeletonize(mask_skl)
+        #mask_skl = mask_skl * 255
+        masked_image = apply_mask(masked_image, mask_skl, (0,0,0))
+
     ax.imshow(masked_image.astype(np.uint8)[:,:,0], cmap = 'gray')
     if auto_show:
-        plt.show()
-    
+        fig.show()
+    print(filename)
+    if(logDir is not None) : 
+        MaskFile = logDir + "/Mask/" + filename
+        OverlayFile = logDir + "/OverLay/" + filename
+        mask = mask * 255
+        cv2.imwrite(MaskFile, mask)
+        fig.savefig(OverlayFile, dpi = 4096) 
 
 def draw_rois(image, rois, refined_rois, mask, class_ids, class_names, limit=10):
     """

@@ -156,3 +156,5 @@ class Dataset(object):
         mask = np.empty([0, 0, 0])
         class_ids = np.empty([0], np.int32)
         return mask, class_ids
+
+        

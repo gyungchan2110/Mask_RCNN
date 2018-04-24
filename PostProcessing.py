@@ -28,73 +28,157 @@ def Rule_RtUpperCB(bboxes, scores, class_ids_indeces):
  
     return Index 
 
-def Rule_RtLowerCB(bboxes, class_ids_indeces):
+def Rule_RtLowerCB(bboxes, scores, class_ids_indeces):
     
-    Index = 0
+    Index = -1
+
+    candidates = []
     for i in class_ids_indeces:
-        box = bboxes[i]    
-        if bboxes[1] < 512:
-            pass 
+        box = bboxes[i]
+        if box[1] < 500 :
+            candidates.append(i) 
+    if(len(candidates) == 0) :
+        Index = -1
+    elif(len(candidates) == 1):
+        Index =  candidates[0]
+    else:
+        score = []
+        for i in candidates:
+            score.append(scores[i])
+        score = np.asarray(score)
+        Index = candidates[np.argmax(score)]
     
     return Index 
 
-def Rule_LtLowerCB(bboxes, class_ids_indeces):
+def Rule_LtLowerCB(bboxes, scores, class_ids_indeces):
     
-    Index = 0
+    Index = -1
+
+    candidates = []
     for i in class_ids_indeces:
-        box = bboxes[i]    
-        if bboxes[1] < 512:
-            pass 
+        box = bboxes[i]
+        if box[1] > 500 :
+            candidates.append(i) 
+    if(len(candidates) == 0) :
+        Index = -1
+    elif(len(candidates) == 1):
+        Index =  candidates[0]
+    else:
+        score = []
+        for i in candidates:
+            score.append(scores[i])
+        score = np.asarray(score)
+        Index = candidates[np.argmax(score)]
     
     return Index 
 
-def Rule_LAA(bboxes, class_ids_indeces):
+def Rule_LAA(bboxes, scores, class_ids_indeces):
     
-    Index = 0
+    Index = -1
+
+    candidates = []
     for i in class_ids_indeces:
-        box = bboxes[i]    
-        if bboxes[1] < 512:
-            pass 
+        box = bboxes[i]
+        if box[1] > 500 :
+            candidates.append(i) 
+    if(len(candidates) == 0) :
+        Index = -1
+    elif(len(candidates) == 1):
+        Index =  candidates[0]
+    else:
+        score = []
+        for i in candidates:
+            score.append(scores[i])
+        score = np.asarray(score)
+        Index = candidates[np.argmax(score)]
     
     return Index
 
-def Rule_PC(bboxes, class_ids_indeces):
+def Rule_PC(bboxes, scores, class_ids_indeces):
     
-    Index = 0
+    Index = -1
+
+    candidates = []
     for i in class_ids_indeces:
-        box = bboxes[i]    
-        if bboxes[1] < 512:
-            pass 
+        box = bboxes[i]
+        if box[1] > 500 :
+            candidates.append(i) 
+    if(len(candidates) == 0) :
+        Index = -1
+    elif(len(candidates) == 1):
+        Index =  candidates[0]
+    else:
+        score = []
+        for i in candidates:
+            score.append(scores[i])
+        score = np.asarray(score)
+        Index = candidates[np.argmax(score)]
     
     return Index 
 
-def Rule_AK(bboxes, class_ids_indeces):
+def Rule_AK(bboxes, scores, class_ids_indeces):
     
-    Index = 0
+    Index = -1
+
+    candidates = []
     for i in class_ids_indeces:
-        box = bboxes[i]    
-        if bboxes[1] < 512:
-            pass 
+        box = bboxes[i]
+        if box[1] > 500 and box[0] < 512:
+            candidates.append(i) 
+    if(len(candidates) == 0) :
+        Index = -1
+    elif(len(candidates) == 1):
+        Index =  candidates[0]
+    else:
+        score = []
+        for i in candidates:
+            score.append(scores[i])
+        score = np.asarray(score)
+        Index = candidates[np.argmax(score)]
     
     return Index
 
-def Rule_Carina(bboxes, class_ids_indeces):
+def Rule_Carina(bboxes, scores, class_ids_indeces):
     
-    Index = 0
+    Index = -1
+
+    candidates = []
     for i in class_ids_indeces:
-        box = bboxes[i]    
-        if bboxes[1] < 512:
-            pass 
+        box = bboxes[i]
+        if box[0] < 512:
+            candidates.append(i) 
+    if(len(candidates) == 0) :
+        Index = -1
+    elif(len(candidates) == 1):
+        Index =  candidates[0]
+    else:
+        score = []
+        for i in candidates:
+            score.append(scores[i])
+        score = np.asarray(score)
+        Index = candidates[np.argmax(score)]
     
     return Index
 
-def Rule_DAO(bboxes, class_ids_indeces):
+def Rule_DAO(bboxes, scores, class_ids_indeces):
     
-    Index = 0
+    Index = -1
+
+    candidates = []
     for i in class_ids_indeces:
-        box = bboxes[i]    
-        if bboxes[1] < 512:
-            pass 
+        box = bboxes[i]
+        if box[1] > 400 :
+            candidates.append(i) 
+    if(len(candidates) == 0) :
+        Index = -1
+    elif(len(candidates) == 1):
+        Index =  candidates[0]
+    else:
+        score = []
+        for i in candidates:
+            score.append(scores[i])
+        score = np.asarray(score)
+        Index = candidates[np.argmax(score)]
     
     return Index 
 
