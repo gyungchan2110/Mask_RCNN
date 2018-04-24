@@ -9,6 +9,7 @@ Written by Waleed Abdulla
 
 import math
 import numpy as np
+import os
 
 
 # Base Configuration Class

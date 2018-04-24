@@ -9,9 +9,13 @@ import csv
 import pickle  
 import gc
 import visualize  
+
 import cv2
 from skimage.morphology import skeletonize
 import math
+
+from keras.callbacks import ModelCheckpoint, TensorBoard, EarlyStopping, History
+
 
 from keras import backend as K
 
@@ -58,17 +62,15 @@ def Train_DataSet(TaskID, datasetBase, datasetConfig, modelConfig, train_data, v
     datasetConfig.SaveConfig(LOG_DIR_FOLDER)
     modelConfig.SaveConfig(LOG_DIR_FOLDER)
 
-    #draw_history_graph(history, LOG_DIR_FOLDER + "/" + HistImgFile)
-    with open(LOG_DIR_FOLDER + "/" + HistDumpFile, 'wb') as file_pi:
-        pickle.dump(history.history, file_pi)
-    pandas.DataFrame(history.history).to_csv(LOG_DIR_FOLDER + "/" + HistDumpFileCSV)
+    
+    #pandas.DataFrame(history.history).to_csv(LOG_DIR_FOLDER + "/" + HistDumpFileCSV)
     save_TrainHistoryLog("Success", TaskID, ROOT_DIR, datasetConfig, modelConfig)
     Result = True
 
     del model
     gc.collect()
     K.clear_session()
-    return Result, FinalModelFile
+    return Result, FinalModelFile, history
 
 
 def Test_Dataset(TaskID, datasetBase, datasetConfig, modelConfig, ModelFileName, testData, modelInLogDir = False, showImg = True):
