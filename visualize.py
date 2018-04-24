@@ -93,10 +93,10 @@ def display_instances(image, result, class_names, filename,
     colors: (optional) An array or colors to use with each object
     captions: (optional) A list of strings to use as captions for each object
     """
+    # boxes = result['rois']
+    # if(len(boxes) == 0):
+    #     return
     boxes = result['rois']
-    if(len(boxes) == 0):
-        return
-    boxes = boxes[0]
     masks = result['masks']
     class_ids = result['class_ids']
     boxes = np.asarray(boxes)
@@ -164,7 +164,8 @@ def display_instances(image, result, class_names, filename,
                 color='w', size=11, backgroundcolor="none")
 
         # Mask
-        mask = masks[0, :, :, i]
+        print(masks.shape)
+        mask = masks[:, :, i]
         if show_mask:
             masked_image = apply_mask(masked_image, mask, color)
             mask_skl = np.copy(mask)

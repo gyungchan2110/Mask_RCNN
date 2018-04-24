@@ -2413,20 +2413,34 @@ class MaskRCNN():
         #     log("image_metas", image_metas)
         # Run object detection
         
- 
+        #image = np.expand_dims(image, 0)
+        # molded_images, image_metas, windows = self.mold_inputs(images)
+        # print(molded_images.shape,image_metas.shape, windows.shape )
+        # detections, mrcnn_class, mrcnn_bbox, mrcnn_mask, \
+        # rois, rpn_class, rpn_bbox =\
+        # self.keras_model.predict([molded_images, image_metas], batch_size = self.config.BATCH_SIZE, verbose=0)
+        # print(detections[0].shape)
+
         # Process detections
         results = []
         for i, image in enumerate(images):
+            
             image = np.expand_dims(image, 0)
             molded_images, image_metas, windows = self.mold_inputs(image)
-            
+            print(molded_images.shape,image_metas.shape, windows.shape )
+
             detections, mrcnn_class, mrcnn_bbox, mrcnn_mask, \
             rois, rpn_class, rpn_bbox =\
             self.keras_model.predict([molded_images, image_metas], batch_size = self.config.BATCH_SIZE, verbose=0)
             
+            
+
             final_rois, final_class_ids, final_scores, final_masks =\
                 self.unmold_detections(detections[0], mrcnn_mask[0],
-                                       image.shape, windows[0])
+                                       image.shape[1:], windows[0])
+            # print(mrcnn_mask[i])
+            # print(windows[i])
+                        
             results.append({
                 "rois": final_rois,
                 "class_ids": final_class_ids,
