@@ -129,7 +129,20 @@ def Test_Dataset(TaskID, datasetBase, datasetConfig, modelConfig, ModelFileName,
         f_writer.writerow(strline)
 
         for i, result in enumerate(results):
-            bbox = result['rois'][0]
+            
+            bboxes = result['rois']
+            if(len(bboxes) == 0):
+                dices.append(0)
+                jaccards.append(0)
+                ious.append(0)
+                distances.append(0)
+                
+                strline = []
+                strline = [testFileNames[i], 0, 0, 0, 0, 0, 0]
+                f_writer.writerow(strline)
+                continue
+                
+            bbox = bboxes[0]
             mask = result['masks'][:,:,0]
             class_ids = result['class_ids']
 
@@ -159,7 +172,7 @@ def Test_Dataset(TaskID, datasetBase, datasetConfig, modelConfig, ModelFileName,
 
         f.close()
         dice = np.asarray(dices).mean()
-        jaccard = np.asarray(jaccard).mean()
+        jaccard = np.asarray(jaccards).mean()
         iou = np.asarray(ious).mean()
         dis = np.asarray(distances).mean()
 

@@ -93,8 +93,11 @@ def display_instances(image, result, class_names, filename,
     colors: (optional) An array or colors to use with each object
     captions: (optional) A list of strings to use as captions for each object
     """
-    boxes = result['rois'][0], 
-    masks = result['masks'], 
+    boxes = result['rois']
+    if(len(boxes) == 0):
+        return
+    boxes = boxes[0]
+    masks = result['masks']
     class_ids = result['class_ids']
     boxes = np.asarray(boxes)
     masks = np.asarray(masks)

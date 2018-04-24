@@ -249,7 +249,10 @@ def GetMostProperMask(results, classes):
 
 
         refined_scores = np.asarray(refined_scores)
-        refined_masks = np.stack(refined_masks, -1)
+        if(len(refined_masks) == 0):
+            refined_masks = []
+        else : 
+            refined_masks = np.stack(refined_masks, -1)
         refined_bboxes = np.asarray(refined_bboxes)
         refined_class_ids = np.asarray(refined_class_ids)
 
