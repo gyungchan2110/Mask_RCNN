@@ -182,14 +182,14 @@ def Rule_DAO(bboxes, scores, class_ids_indeces):
     
     return Index 
 
-RulesDic = {"Aortic Knob" : "Rule_AK", 
-            "Lt Lower CB" : "Rule_LtLowerCB", 
-            "Pulmonary Conus" : "Rule_PC", 
-            "Rt Lower CB" : "Rule_RtLowerCB", 
+RulesDic = {"Aortic Knob" : Rule_AK, 
+            "Lt Lower CB" : Rule_LtLowerCB, 
+            "Pulmonary Conus" : Rule_PC, 
+            "Rt Lower CB" : Rule_RtLowerCB, 
             "Rt Upper CB" : Rule_RtUpperCB, 
-            "DAO" : "Rule_DAO", 
-            "Carina" : "Rule_Carina", 
-            "LAA" : "Rule_LAA", 
+            "DAO" : Rule_DAO, 
+            "Carina" : Rule_Carina, 
+            "LAA" : Rule_LAA, 
             }
             
 def Rules(bboxes, scores, class_ids_indeces, classname):
