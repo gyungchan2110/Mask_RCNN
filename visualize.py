@@ -199,12 +199,13 @@ def display_instances(image, result, class_names, filename,
             verts = np.fliplr(verts) - 1
             p = Polygon(verts, linewidth = 2, facecolor="none", edgecolor=color)
             ax.add_patch(p)
-
+            
+        #masked_image = apply_mask(masked_image, truemask, color)
         mask_skl = np.copy(truemask[:,:,0])
         mask_skl = mask_skl // 255
         mask_skl = skeletonize(mask_skl)
         #mask_skl = mask_skl * 255
-        masked_image = apply_mask(masked_image, mask_skl, (0,0,0))
+        masked_image = apply_mask(masked_image, mask_skl, color)
 
     ax.imshow(masked_image.astype(np.uint8)[:,:,0], cmap = 'gray')
     if auto_show:
@@ -215,7 +216,9 @@ def display_instances(image, result, class_names, filename,
         OverlayFile = logDir + "/OverLay/" + filename
         mask = mask * 255
         cv2.imwrite(MaskFile, mask)
-        fig.savefig(OverlayFile, dpi = 2048) 
+        masked_image = np.asarray(masked_image, dtype = "uint8")
+        cv2.imwrite(OverlayFile, masked_image)
+        #fig.savefig(OverlayFile, dpi = 10) 
 
 def draw_rois(image, rois, refined_rois, mask, class_ids, class_names, limit=10):
     """
