@@ -110,7 +110,7 @@ def Test_Dataset(TaskID, datasetBase, datasetConfig, modelConfig, ModelFileName,
     # Run detection
     results = model.detect_All(testImages, verbose=1)      
     results = PostProcessing.GetMostProperMask(results, Classes)
-    
+    print("Result ! ")
     #############################################################
     # Estimation 
 

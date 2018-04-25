@@ -2427,7 +2427,7 @@ class MaskRCNN():
             
             image = np.expand_dims(image, 0)
             molded_images, image_metas, windows = self.mold_inputs(image)
-            print(molded_images.shape,image_metas.shape, windows.shape )
+            #print(molded_images.shape,image_metas.shape, windows.shape )
 
             detections, mrcnn_class, mrcnn_bbox, mrcnn_mask, \
             rois, rpn_class, rpn_bbox =\

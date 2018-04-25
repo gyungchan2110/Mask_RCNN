@@ -215,7 +215,7 @@ def display_instances(image, result, class_names, filename,
         OverlayFile = logDir + "/OverLay/" + filename
         mask = mask * 255
         cv2.imwrite(MaskFile, mask)
-        fig.savefig(OverlayFile, dpi = 4096) 
+        fig.savefig(OverlayFile, dpi = 2048) 
 
 def draw_rois(image, rois, refined_rois, mask, class_ids, class_names, limit=10):
     """
