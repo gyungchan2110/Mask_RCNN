@@ -107,6 +107,7 @@ def display_instances(image, result, class_names, filename,
     N = boxes.shape[0]
     if not N:
         print("\n*** No instances to display *** \n")
+        return 
     else:
         #print(boxes.shape[0], masks.shape[-1], class_ids.shape[0])
         assert boxes.shape[0] == masks.shape[-1] == class_ids.shape[0]
@@ -215,6 +216,7 @@ def display_instances(image, result, class_names, filename,
         MaskFile = logDir + "/Mask/" + filename
         OverlayFile = logDir + "/OverLay/" + filename
         mask = mask * 255
+        mask = np.asarray(mask, dtype = "uint8")
         cv2.imwrite(MaskFile, mask)
         masked_image = np.asarray(masked_image, dtype = "uint8")
         cv2.imwrite(OverlayFile, masked_image)

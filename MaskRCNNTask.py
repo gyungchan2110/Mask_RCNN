@@ -189,6 +189,10 @@ def Test_Dataset(TaskID, datasetBase, datasetConfig, modelConfig, ModelFileName,
     for i, result in enumerate(results) : 
         visualize.display_instances(testImages[i], result, Classes, testFileNames[i], auto_show = showImg, truemask = testMasks[i,:,:,:], logDir = LOG_DIR_FOLDER )
     
+    del model
+    gc.collect()
+    K.clear_session()
+    return Result, FinalModelFile, history
     print("Test Done ! ")
 
 
