@@ -1187,9 +1187,11 @@ def load_image_gt(dataset, config, image_id, augment=False,
         defined in MINI_MASK_SHAPE.
     """
     # Load image and mask
-    image = dataset.load_image(image_id)
+    image,filename = dataset.load_image(image_id)
     mask, class_ids = dataset.load_mask(image_id)
+    image = np.asarray(image)
     shape = image.shape
+    #print(shape)
     image, window, scale, padding = utils.resize_image(
         image,
         min_dim=config.IMAGE_MIN_DIM,

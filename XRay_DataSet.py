@@ -276,7 +276,7 @@ class Xray_CardioMegalyDataset(DataSets.Dataset):
         N = len(filePaths)
         for i, filePath in enumerate(filePaths):           
             #print(filePath)
-            if i == 0:
+            if i == 0 and N >= 2:
                 continue
             mask = cv2.imread(filePath)
             mask = np.asarray(mask, dtype = "int16")
