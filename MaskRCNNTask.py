@@ -192,7 +192,7 @@ def Test_Dataset(TaskID, datasetBase, datasetConfig, modelConfig, ModelFileName,
     del model
     gc.collect()
     K.clear_session()
-    return Result, FinalModelFile, history
+
     print("Test Done ! ")
 
 
