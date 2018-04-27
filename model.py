@@ -1636,6 +1636,7 @@ def data_generator(dataset, config, shuffle=True, augment=True, random_rois=0,
             # Skip images that have no instances. This can happen in cases
             # where we train on a subset of classes and the image doesn't
             # have any of the classes we care about.
+            #print(gt_class_ids)
             if not np.any(gt_class_ids > 0):
                 continue
 
@@ -1712,6 +1713,7 @@ def data_generator(dataset, config, shuffle=True, augment=True, random_rois=0,
             b += 1
 
             # Batch full?
+            #print(batch_size, b)
             if b >= batch_size:
                 inputs = [batch_images, batch_image_meta, batch_rpn_match, batch_rpn_bbox,
                           batch_gt_class_ids, batch_gt_boxes, batch_gt_masks]

@@ -245,7 +245,7 @@ class Xray_CardioMegalyDataset(DataSets.Dataset):
         """
         info = self.image_info[image_id]
         fileaPath = info["path"]
-        print(fileaPath)
+        #print(fileaPath)
         image = cv2.imread(fileaPath)
         image = np.array(image, dtype = "int16")
         if(len(image.shape) < 3):
@@ -270,7 +270,7 @@ class Xray_CardioMegalyDataset(DataSets.Dataset):
         filePaths = info['maskPaths']
         
         masks = []
-        classids = [0]
+        classids = []
         
         #print(filePaths)
         N = len(filePaths)
@@ -284,7 +284,7 @@ class Xray_CardioMegalyDataset(DataSets.Dataset):
                 mask = mask[:,:,0]
                 
             masks.append(mask)
-        
+            classids.append(1)
         
         image = np.stack(masks, axis=2)
         #print(image.shape)
