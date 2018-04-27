@@ -2203,13 +2203,14 @@ class MaskRCNN():
             layers = layer_regex[layers]
 
         # Data generators
+        print("dataset")
         train_generator = data_generator(train_dataset, self.config, shuffle=True,
                                          batch_size=self.config.BATCH_SIZE)
         val_generator = data_generator(val_dataset, self.config, shuffle=True,
                                        batch_size=self.config.BATCH_SIZE,
                                        augment=False)
         history = keras.callbacks.History() 
-
+        print("Callbacks")
         # Callbacks
         callbacks = [
             keras.callbacks.TensorBoard(log_dir=self.log_dir,
@@ -2233,7 +2234,7 @@ class MaskRCNN():
         else:
             workers = max(self.config.BATCH_SIZE // 2, 2)
 
-        self.keras_model.fit_generator(
+        history = self.keras_model.fit_generator(
             train_generator,
             initial_epoch=self.epoch,
             epochs=epochs,

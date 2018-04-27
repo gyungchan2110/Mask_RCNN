@@ -38,10 +38,10 @@ def Train_DataSet(TaskID, datasetBase, datasetConfig, modelConfig, train_data, v
     for cl in datasetConfig.CLASSES :
         FinalModelFile = FinalModelFile + cl + "_"
     FinalModelFile = FinalModelFile + TaskID + ".hdf5"
-
+    print("Prepare")
     train_data.prepare()
     valid_data.prepare()
-    
+    print("load Model")
     model = modellib.MaskRCNN(mode="training", config=modelConfig, log_dir = LOG_DIR_FOLDER, model_dir=LOG_DIR)
     if modelConfig.LEARNIING_MODE == "transfer":
         model.load_weights(modelConfig.PretainedModelPath, by_name=True)

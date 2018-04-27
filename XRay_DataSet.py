@@ -245,7 +245,7 @@ class Xray_CardioMegalyDataset(DataSets.Dataset):
         """
         info = self.image_info[image_id]
         fileaPath = info["path"]
-
+        print(fileaPath)
         image = cv2.imread(fileaPath)
         image = np.array(image, dtype = "int16")
         if(len(image.shape) < 3):
