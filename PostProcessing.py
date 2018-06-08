@@ -4,7 +4,7 @@ import numpy as np
 
 #r['rois'], r['masks'], r['class_ids'], class_names, r['scores']
 
-Classlist = ["Aortic Knob", "Lt Lower CB", "Pulmonary Conus", "Rt Lower CB", "Rt Upper CB", "DAO" , "Carina" , "LAA"]
+Classlist = ["Aortic Knob", "Lt Lower CB", "Pulmonary Conus", "Rt Lower CB", "Rt Upper CB", "DAO" , "Carina" , "LAA", "Landmark"]
 
 def Rule_RtUpperCB(bboxes, scores, class_ids_indeces):
     
@@ -182,6 +182,50 @@ def Rule_DAO(bboxes, scores, class_ids_indeces):
     
     return Index 
 
+def Rule_Landmark(bboxes, scores, class_ids_indeces):
+    
+    Index = -1
+
+    candidates = []
+    for i in class_ids_indeces:
+        box = bboxes[i]
+        if box[1] > 400 :
+            candidates.append(i) 
+    if(len(candidates) == 0) :
+        Index = -1
+    elif(len(candidates) == 1):
+        Index =  candidates[0]
+    else:
+        score = []
+        for i in candidates:
+            score.append(scores[i])
+        score = np.asarray(score)
+        Index = candidates[np.argmax(score)]
+    
+    return Index 
+
+def Rule_Thoraxx(bboxes, scores, class_ids_indeces):
+    
+    Index = -1
+
+    candidates = []
+    for i in class_ids_indeces:
+        box = bboxes[i]
+        if box[1] > 400 :
+            candidates.append(i) 
+    if(len(candidates) == 0) :
+        Index = -1
+    elif(len(candidates) == 1):
+        Index =  candidates[0]
+    else:
+        score = []
+        for i in candidates:
+            score.append(scores[i])
+        score = np.asarray(score)
+        Index = candidates[np.argmax(score)]
+    
+    return Index 
+
 RulesDic = {"Aortic Knob" : Rule_AK, 
             "Lt Lower CB" : Rule_LtLowerCB, 
             "Pulmonary Conus" : Rule_PC, 
@@ -190,6 +234,8 @@ RulesDic = {"Aortic Knob" : Rule_AK,
             "DAO" : Rule_DAO, 
             "Carina" : Rule_Carina, 
             "LAA" : Rule_LAA, 
+            "Landmark" : Rule_Landmark,
+            "Thorax(x)":Rule_Thoraxx
             }
             
 def Rules(bboxes, scores, class_ids_indeces, classname):

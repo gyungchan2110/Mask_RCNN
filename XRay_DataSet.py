@@ -28,9 +28,13 @@ def get_Data_Set(datasetConfig, datasetBase, dataType):
     MasksPath = datasetBase + "/" + dataset + "/Masks"
 
     imgpath = ImagePath + "/" + dataType
-    maskPaths = []
-    for cl in classes:
-        maskPaths.append(MasksPath + "/" + cl + "/" + dataType)
+    
+    if(os.path.isdir(MasksPath)):
+        maskPaths = []
+        for cl in classes:
+            maskPaths.append(MasksPath + "/" + cl + "/" + dataType)
+    else :
+        maskPaths = None
 
     data = Xray_CardioMegalyDataset()
     data.load_classes(imgpath, maskPaths, classes)
@@ -228,9 +232,12 @@ class Xray_CardioMegalyDataset(DataSets.Dataset):
         for file in os.listdir(path):
             index = len(self.image_info)
             filepath = path + "/" + file
-            maskFilePath = []
-            for i,filePath in enumerate(maskPath):
-                maskFilePath.append(filePath + "/" + file)
+            
+            if(maskPath):
+                maskFilePath = []
+                for i,filePath in enumerate(maskPath):
+                    maskFilePath.append(filePath + "/" + file)
+            
             self.add_image("Cardiomegaly", image_id=index, path=filepath, maskPaths = maskFilePath,
                            width=width, height=height)
         
@@ -269,6 +276,9 @@ class Xray_CardioMegalyDataset(DataSets.Dataset):
         info = self.image_info[image_id]
         filePaths = info['maskPaths']
         
+        if filePaths is None:
+            return None
+        
         masks = []
         classids = []
         
@@ -276,6 +286,10 @@ class Xray_CardioMegalyDataset(DataSets.Dataset):
         N = len(filePaths)
         for i, filePath in enumerate(filePaths):           
             #print(filePath)
+            
+            if (filePath == None or filePath == ""):
+                continue
+            
             if i == 0 and N >= 2:
                 continue
             mask = cv2.imread(filePath)
@@ -303,14 +317,16 @@ class Xray_CardioMegalyDataset(DataSets.Dataset):
         Filenames = []
 
         for pid in ids : 
-
+            print(pid)
             image, filename = self.load_image(pid)
-            masks,ids = self.load_mask(pid) 
+            #masks,ids = self.load_mask(pid) 
+            #rint(filename)
             Images.append(image)
-            Masks.append(masks)
+            #Masks.append(masks)
             Filenames.append(filename)
 
         Images = np.stack(Images, 0)
-        Masks = np.stack(Masks, 0)
+        #asks = np.stack(Masks, 0)
+        Masks = None
         print("Get Data Done")
         return Images, Filenames, Masks

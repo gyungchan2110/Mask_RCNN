@@ -97,9 +97,10 @@ def Test_Dataset(TaskID, datasetBase, datasetConfig, modelConfig, ModelFileName,
     if(not os.path.isdir(OVERLAY_DIR)):
         os.mkdir(OVERLAY_DIR)
 
+    print("start prepare")
     testData.prepare()
     testImages, testFileNames, testMasks = testData.getDataSet()
-
+    print("load Data Done")
 
     model = modellib.MaskRCNN(mode="inference", model_dir=MODEL_DIR + "/" + ModelFileName, config=modelConfig, log_dir = LOG_DIR)
     model.load_weights(MODEL_DIR + "/" + ModelFileName, by_name=True)
@@ -113,81 +114,81 @@ def Test_Dataset(TaskID, datasetBase, datasetConfig, modelConfig, ModelFileName,
     print("Result ! ")
     #############################################################
     # Estimation 
+    if(testMasks is not None):
+        dices = []
+        jaccards = []
+        ious = []
+        distances = []
 
-    dices = []
-    jaccards = []
-    ious = []
-    distances = []
+        try : 
 
-    try : 
-
-        logfile = LOG_DIR_FOLDER + "/Test_" + TaskID + "_Result.csv"
-        f = open(logfile, 'a')
-        f_writer = csv.writer(f)
-        strline = []
-        strline = ["filename", "Dice", "jaccard", "iou_mean", "dis_min", "dis_max", "dis_mean"]
-        f_writer.writerow(strline)
-
-        for i, result in enumerate(results):
-            
-            bboxes = result['rois']
-            if(len(bboxes) == 0):
-                dices.append(0)
-                jaccards.append(0)
-                ious.append(0)
-                distances.append(0)
-                
-                strline = []
-                strline = [testFileNames[i], 0, 0, 0, 0, 0, 0]
-                f_writer.writerow(strline)
-                continue
-                
-            bbox = bboxes[0]
-            mask = result['masks'][:,:,0]
-            class_ids = result['class_ids']
-
-            truemask = np.asarray(testMasks[i], dtype = "uint8")
-            ret, truemask = cv2.threshold(truemask, 127, 255, cv2.THRESH_BINARY)
-            _, contours, _ = cv2.findContours(truemask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-            
-            true_bbox = cv2.boundingRect(contours[0])
-            
-            truemask = truemask // 255 
-            mask = np.asarray(mask)
-            #print(mask.shape, truemask.shape)
-            dice = Dice(truemask, mask)
-            jaccard = Jaccard_coef(truemask, mask)
-            iou = estimate_IoU(true_bbox, (bbox[1], bbox[0], bbox[3] - bbox[1], bbox[2] - bbox[0]))
-            dis = ave_DisofSkeleton(truemask, mask)
-
+            logfile = LOG_DIR_FOLDER + "/Test_" + TaskID + "_Result.csv"
+            f = open(logfile, 'a')
+            f_writer = csv.writer(f)
             strline = []
-            strline = [testFileNames[i], dice, jaccard, iou, dis[0], dis[1], dis[2]]
+            strline = ["filename", "Dice", "jaccard", "iou_mean", "dis_min", "dis_max", "dis_mean"]
             f_writer.writerow(strline)
-    
 
-            dices.append(dice)
-            jaccards.append(jaccard)
-            ious.append(iou)
-            distances.append(dis[2])
+            for i, result in enumerate(results):
 
-        f.close()
-        dice = np.asarray(dices).mean()
-        jaccard = np.asarray(jaccards).mean()
-        iou = np.asarray(ious).mean()
-        dis = np.asarray(distances).mean()
+                bboxes = result['rois']
+                if(len(bboxes) == 0):
+                    dices.append(0)
+                    jaccards.append(0)
+                    ious.append(0)
+                    distances.append(0)
 
-    except Exception as ex: 
-        print(ex)
-        if (f):
+                    strline = []
+                    strline = [testFileNames[i], 0, 0, 0, 0, 0, 0]
+                    f_writer.writerow(strline)
+                    continue
+
+                bbox = bboxes[0]
+                mask = result['masks'][:,:,0]
+                class_ids = result['class_ids']
+
+                truemask = np.asarray(testMasks[i], dtype = "uint8")
+                ret, truemask = cv2.threshold(truemask, 127, 255, cv2.THRESH_BINARY)
+                _, contours, _ = cv2.findContours(truemask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+
+                true_bbox = cv2.boundingRect(contours[0])
+
+                truemask = truemask // 255 
+                mask = np.asarray(mask)
+                #print(mask.shape, truemask.shape)
+                dice = Dice(truemask, mask)
+                jaccard = Jaccard_coef(truemask, mask)
+                iou = estimate_IoU(true_bbox, (bbox[1], bbox[0], bbox[3] - bbox[1], bbox[2] - bbox[0]))
+                dis = ave_DisofSkeleton(truemask, mask)
+
+                strline = []
+                strline = [testFileNames[i], dice, jaccard, iou, dis[0], dis[1], dis[2]]
+                f_writer.writerow(strline)
+
+
+                dices.append(dice)
+                jaccards.append(jaccard)
+                ious.append(iou)
+                distances.append(dis[2])
+
             f.close()
-        os.rmdir(LOG_DIR_FOLDER) 
+            dice = np.asarray(dices).mean()
+            jaccard = np.asarray(jaccards).mean()
+            iou = np.asarray(ious).mean()
+            dis = np.asarray(distances).mean()
 
-    save_TestHistoryLog(TaskID, ROOT_DIR, ModelFileName, dice, jaccard, iou, dis, datasetConfig)
+        except Exception as ex: 
+            print(ex)
+            if (f):
+                f.close()
+            os.rmdir(LOG_DIR_FOLDER) 
+
+        save_TestHistoryLog(TaskID, ROOT_DIR, ModelFileName, dice, jaccard, iou, dis, datasetConfig)
     
     ############################################################
     # Display & Save 
     for i, result in enumerate(results) : 
-        visualize.display_instances(testImages[i], result, Classes, testFileNames[i], auto_show = showImg, truemask = testMasks[i,:,:,:], logDir = LOG_DIR_FOLDER )
+        visualize.display_instances(testImages[i], result, Classes, testFileNames[i], auto_show = showImg, truemask =None, logDir = LOG_DIR_FOLDER )
     
     del model
     gc.collect()
